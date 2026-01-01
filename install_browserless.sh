@@ -1,26 +1,40 @@
 #!/bin/bash
 
 # Browserless Docker 컨테이너 설치 및 실행 스크립트
-# Windows WSL 환경에서 실행
+# Windows WSL 또는 Linux 환경에서 실행
+
+# 설정 변수
+CONTAINER_NAME="browserless"
+PORT=4040
+TOKEN=""  # 인증 토큰 (필요 시 설정)
+MAX_SESSIONS=10
+IMAGE="ghcr.io/browserless/chromium:latest"
 
 echo "Docker 버전 확인 중..."
 if ! command -v docker &> /dev/null; then
-    echo "Docker가 설치되어 있지 않습니다. WSL에서 Docker를 설치하세요."
+    echo "Docker가 설치되어 있지 않습니다. 설치 후 다시 실행하세요."
     exit 1
 fi
 
 echo "Docker 버전: $(docker --version)"
 
 echo "Browserless Chrome 이미지 다운로드 중..."
-docker pull browserless/chrome
+docker pull $IMAGE
 
 echo "기존 Browserless 컨테이너 정리 중..."
-docker stop browserless 2>/dev/null || true
-docker rm browserless 2>/dev/null || true
+docker stop $CONTAINER_NAME 2>/dev/null || true
+docker rm $CONTAINER_NAME 2>/dev/null || true
 
-echo "Browserless 컨테이너 실행 중..."
-# 포트 3000을 호스트에 매핑하여 실행, HTTP API 활성화
-docker run -d --name browserless -p 4040:3000 -e ENABLE_API_GET=true browserless/chrome
+echo "Browserless($CONTAINER_NAME) 시작 중... (포트: $PORT)"
+docker run -d \
+  --name $CONTAINER_NAME \
+  --restart always \
+  -p $PORT:3000 \
+  -e "TOKEN=$TOKEN" \
+  -e "MAX_CONCURRENT_SESSIONS=$MAX_SESSIONS" \
+  -e "MAX_QUEUE_LENGTH=5" \
+  -e "PRE_REQUEST_HEALTH_CHECK=true" \
+  $IMAGE
 
 echo "Browserless 컨테이너가 실행되었습니다."
 echo "접속 URL: http://localhost:4040"
