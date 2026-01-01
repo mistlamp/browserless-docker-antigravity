@@ -14,6 +14,10 @@ echo "Docker 버전: $(docker --version)"
 echo "Browserless Chrome 이미지 다운로드 중..."
 docker pull browserless/chrome
 
+echo "기존 Browserless 컨테이너 정리 중..."
+docker stop browserless 2>/dev/null || true
+docker rm browserless 2>/dev/null || true
+
 echo "Browserless 컨테이너 실행 중..."
 # 포트 3000을 호스트에 매핑하여 실행, HTTP API 활성화
 docker run -d --name browserless -p 4040:3000 -e ENABLE_API_GET=true browserless/chrome
