@@ -33,4 +33,5 @@ sudo apt-get install -y nodejs
 echo "puppeteer-core 설치 중..."
 npm install puppeteer-core
 
-echo "설치 완료. 테스트: node test_browserless.js"
+echo "설치 완료. 테스트 실행 중..."
+node test_browserless.js
