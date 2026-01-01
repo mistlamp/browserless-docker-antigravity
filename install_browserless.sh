@@ -21,3 +21,12 @@ docker run -d --name browserless -p 4040:3000 -e ENABLE_API_GET=true browserless
 echo "Browserless 컨테이너가 실행되었습니다."
 echo "접속 URL: http://localhost:4040"
 echo "컨테이너 상태 확인: docker ps"
+
+echo "테스트를 위한 Node.js 설치 중..."
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+echo "puppeteer-core 설치 중..."
+npm install puppeteer-core
+
+echo "설치 완료. 테스트: node test_browserless.js"
